@@ -4,12 +4,13 @@ param()
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = (Resolve-Path $PSScriptRoot).Path
-$config = Join-Path $repoRoot '.tmux.conf'
 $configDir = Join-Path $HOME '.config/tmux'
+$repoCopy = Join-Path $configDir 'tmux-config'
 $target = Join-Path $configDir 'tmux.conf'
+$legacy = Join-Path $HOME '.tmux.conf'
 
-if (-not (Test-Path -LiteralPath $config -PathType Leaf)) {
-    throw "Expected configuration file was not found: $config"
+if (-not (Test-Path -LiteralPath (Join-Path $repoRoot '.tmux.conf') -PathType Leaf)) {
+    throw "Expected configuration file was not found: $(Join-Path $repoRoot '.tmux.conf')"
 }
 
 if (-not (Get-Command tmux -ErrorAction SilentlyContinue)) {
@@ -26,17 +27,26 @@ if (-not (Get-Command tmux -ErrorAction SilentlyContinue)) {
 
 New-Item -ItemType Directory -Force -Path $configDir | Out-Null
 
-if (Test-Path -LiteralPath $target) {
-    $item = Get-Item -LiteralPath $target -Force
-    if ($item.LinkType -and $item.Target -eq $config) {
-        Write-Output "$target is already linked to this repository."
-        exit 0
+function Backup-IfPresent($Path) {
+    if (Test-Path -LiteralPath $Path) {
+        $backup = "$Path.backup.$(Get-Date -Format 'yyyyMMddHHmmss')"
+        Move-Item -LiteralPath $Path -Destination $backup
+        Write-Output "Backed up $Path to $backup"
     }
-
-    $backup = "$target.backup.$(Get-Date -Format 'yyyyMMddHHmmss')"
-    Move-Item -LiteralPath $target -Destination $backup
-    Write-Output "Backed up $target to $backup"
 }
 
-New-Item -ItemType SymbolicLink -Path $target -Target $config | Out-Null
-Write-Output "Linked $target to $config"
+Backup-IfPresent $repoCopy
+Copy-Item -LiteralPath $repoRoot -Destination $repoCopy -Recurse -Force
+
+function Write-Source($Path, $Source) {
+    $line = "source-file $Source"
+    if ((Test-Path -LiteralPath $Path -PathType Leaf) -and ((Get-Content -LiteralPath $Path -Raw).TrimEnd() -eq $line)) {
+        return
+    }
+    Backup-IfPresent $Path
+    Set-Content -LiteralPath $Path -Value $line
+}
+
+Write-Source $target '~/.config/tmux/tmux-config/.tmux.conf'
+Write-Source $legacy '~/.config/tmux/tmux.conf'
+Write-Output "Installed tmux config in $repoCopy"

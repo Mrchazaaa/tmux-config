@@ -3,9 +3,10 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-config="$repo_dir/.tmux.conf"
 config_dir="$HOME/.config/tmux"
+repo_copy="$config_dir/tmux-config"
 target="$config_dir/tmux.conf"
+legacy="$HOME/.tmux.conf"
 
 install_tmux() {
   command -v tmux >/dev/null 2>&1 && return
@@ -29,16 +30,27 @@ install_tmux
 
 mkdir -p "$config_dir"
 
-if [[ -L "$target" && "$(readlink -f "$target")" == "$config" ]]; then
-  printf '%s is already linked to this repository.\n' "$target"
-  exit 0
-fi
+backup_if_present() {
+  local path="$1"
+  if [[ -e "$path" || -L "$path" ]]; then
+    local backup="$path.backup.$(date +%Y%m%d%H%M%S)"
+    mv "$path" "$backup"
+    printf 'Backed up %s to %s\n' "$path" "$backup"
+  fi
+}
 
-if [[ -e "$target" || -L "$target" ]]; then
-  backup="$target.backup.$(date +%Y%m%d%H%M%S)"
-  mv "$target" "$backup"
-  printf 'Backed up %s to %s\n' "$target" "$backup"
-fi
+backup_if_present "$repo_copy"
+cp -R "$repo_dir" "$repo_copy"
 
-ln -s "$config" "$target"
-printf 'Linked %s to %s\n' "$target" "$config"
+write_source() {
+  local path="$1" source="$2" line="source-file $2"
+  if [[ -f "$path" ]] && [[ "$(<"$path")" == "$line" ]]; then
+    return
+  fi
+  backup_if_present "$path"
+  printf '%s\n' "$line" > "$path"
+}
+
+write_source "$target" "~/.config/tmux/tmux-config/.tmux.conf"
+write_source "$legacy" "~/.config/tmux/tmux.conf"
+printf 'Installed tmux config in %s\n' "$repo_copy"
