@@ -12,7 +12,7 @@ The installers require `git`. The Linux installer can offer to install missing
 Run this one-liner in a terminal:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Mrchazaaa/tmux-config/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mrchazaaa/tmux-config/master/install.sh | bash
 ```
 
 Update later with `cd ~/.config/tmux/tmux-config && git pull`.
@@ -23,7 +23,7 @@ With [psmux](https://github.com/psmux/psmux) already installed, run this one-lin
 in PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/Mrchazaaa/tmux-config/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Mrchazaaa/tmux-config/master/install.ps1 | iex
 ```
 
 The Windows installer clones to `$HOME\.config\tmux\tmux-config` and writes

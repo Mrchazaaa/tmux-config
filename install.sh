@@ -19,7 +19,7 @@ else
   }
   HELPER_TMP="$(mktemp)"
   trap 'rm -f "$HELPER_TMP"' EXIT
-  curl -fsSL https://raw.githubusercontent.com/Mrchazaaa/tmux-config/main/scripts/lib/install-helpers.sh -o "$HELPER_TMP"
+  curl -fsSL https://raw.githubusercontent.com/Mrchazaaa/tmux-config/master/scripts/lib/install-helpers.sh -o "$HELPER_TMP"
   source "$HELPER_TMP"
 fi
 
