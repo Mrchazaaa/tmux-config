@@ -18,6 +18,29 @@ MY NOTES
   Ctrl+b [       Enter copy mode
   Ctrl+b ?       Built-in key bindings
 
+BUFFERS (tmux's saved copies)
+  Ctrl+b [       Enter copy mode; move with arrows or h/j/k/l
+  Space          Start selection (in copy mode), then move to select text
+  Enter          Copy selection into a buffer and leave copy mode
+  Ctrl+b ]       Paste the most recent buffer into the current pane
+  Ctrl+b =       Choose a buffer to paste (arrows, then Enter)
+  Ctrl+b :  list-buffers          List saved buffers
+  Ctrl+b :  show-buffer           Show the most recent buffer's contents
+  Ctrl+b :  delete-buffer         Delete the most recent buffer
+  Each copy creates a NEW buffer; copy several selections, then Ctrl+b =
+  to pick which one to paste. Older automatic buffers eventually expire.
+
+  Named buffers (kept until deleted; enter commands with Ctrl+b :)
+    set-buffer -b notes 'hello'   Create notes, or replace its contents
+    set-buffer -b todo 'ship it'  Create a second, independent buffer
+    paste-buffer -b notes        Paste notes into the current pane
+    show-buffer -b notes         View notes
+    delete-buffer -b notes       Delete notes
+    set-buffer -b buffer0000 -n notes
+                                 Rename a copied buffer (use its list-buffers name)
+                                 to an unused name to keep it
+  Buffers are shared across sessions on the same tmux server.
+
 JOIN PANE FROM ANOTHER WINDOW
   Ctrl+b :  join-pane -s 2       Pull window 2's active pane in, split top/bottom
   Ctrl+b :  join-pane -h -s 2    Same, but split side by side
