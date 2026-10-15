@@ -12,11 +12,16 @@ PANES
   Ctrl+b "       Split horizontally
   Ctrl+b o       Switch pane
   Ctrl+b z       Zoom/unzoom pane
+  Ctrl+b }       Swap pane with next (flip sides when 2 panes)
+  Ctrl+b {       Swap pane with previous
+  Ctrl+b Ctrl+o  Rotate panes
+  Ctrl+b Space   Cycle layouts (side by side <-> stacked, etc.)
 
 MY NOTES
   Ctrl+b d       Detach session
   Ctrl+b [       Enter copy mode
   Ctrl+b ?       Built-in key bindings
+  Ctrl+b h       Open this help in a popup
 
 BUFFERS (tmux's saved copies)
   Ctrl+b [       Enter copy mode; move with arrows or h/j/k/l
@@ -40,6 +45,15 @@ BUFFERS (tmux's saved copies)
                                  Rename a copied buffer (use its list-buffers name)
                                  to an unused name to keep it
   Buffers are shared across sessions on the same tmux server.
+
+SEARCH (in copy mode)
+  Ctrl+b [       Enter copy mode
+  ?              Search up (type text, Enter) - usual choice
+  /              Search down
+  n              Next match (in direction of last search)
+  N              Previous match
+  q              Leave copy mode
+  Ctrl+b f       Find window by name/visible content
 
 JOIN PANE FROM ANOTHER WINDOW
   Ctrl+b :  join-pane -s 2       Pull window 2's active pane in, split top/bottom
